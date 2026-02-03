@@ -1,6 +1,8 @@
 import streamlit as st
 import pickle
 import requests
+import gdown
+import os
 def fetch_poster(movie_id):
     url = 'https://api.themoviedb.org/3/movie/{}?api_key=a986eff7033a86ff0e2a384fcd958219'.format(movie_id)
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -43,6 +45,12 @@ def recommend(moviename):
     return recommended_movies,recommended_movies_posters   # ← moved outside loop (REQUIRED)
 
 # -------- REQUIRED FIXES BELOW --------
+SIMILARITY_FILE = "similarity.pkl"
+GDRIVE_URL = "https://drive.google.com/file/d/1J3dlEWIL_VKGQhXBeB4x4yP6zD9OnOsg/view?usp=sharing"
+
+if not os.path.exists(SIMILARITY_FILE):
+    print("Downloading similarity.pkl from Google Drive...")
+    gdown.download(GDRIVE_URL, SIMILARITY_FILE, quiet=False)
 
 movie = pickle.load(open('movie.pkl', 'rb'))        # ← was missing
 similarity = pickle.load(open('similarity.pkl','rb'))
