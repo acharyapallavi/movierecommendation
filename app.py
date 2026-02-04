@@ -44,16 +44,34 @@ def recommend(moviename):
 
     return recommended_movies,recommended_movies_posters   # ← moved outside loop (REQUIRED)
 
-# -------- REQUIRED FIXES BELOW --------
 SIMILARITY_FILE = "similarity.pkl"
-GDRIVE_URL = "https://drive.google.com/file/d/1J3dlEWIL_VKGQhXBeB4x4yP6zD9OnOsg/view?usp=sharing"
+MOVIE_FILE = "movie.pkl"
+
+SIMILARITY_URL = "https://drive.google.com/uc?id=1J3dlEWIL_VKGQhXBeB4x4yP6zD9OnOsg"
+MOVIE_URL = "https://drive.google.com/uc?id=14q6i9M1JoxHYG-u1SVicKOQ4L7B-BaAU"
+
+# Download similarity.pkl
+if not os.path.exists(SIMILARITY_FILE):
+    st.write("Downloading similarity.pkl...")
+    gdown.download(SIMILARITY_URL, SIMILARITY_FILE, quiet=False)
+
+# Download movie.pkl
+if not os.path.exists(MOVIE_FILE):
+    st.write("Downloading movie.pkl...")
+    gdown.download(MOVIE_URL, MOVIE_FILE, quiet=False)
+
+# SAFETY CHECK
+if not os.path.exists(MOVIE_FILE):
+    st.error("movie.pkl still not found after download")
+    st.stop()
 
 if not os.path.exists(SIMILARITY_FILE):
-    print("Downloading similarity.pkl from Google Drive...")
-    gdown.download(GDRIVE_URL, SIMILARITY_FILE, quiet=False)
+    st.error("similarity.pkl still not found after download")
+    st.stop()
 
-movie = pickle.load(open('movie.pkl', 'rb'))        # ← was missing
-similarity = pickle.load(open('similarity.pkl','rb'))
+# Load files
+movie = pickle.load(open(MOVIE_FILE, "rb"))
+similarity = pickle.load(open(SIMILARITY_FILE, "rb"))
 st.title('movie recommendation system')
 movie_list = movie['title'].values                  # ← fixed
 select_movie_name = st.selectbox(
